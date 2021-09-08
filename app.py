@@ -22,15 +22,21 @@ def get_time():
 
 @app.route('/youtube', methods=['GET', 'POST'])
 def get_transcript():
-    youtube_video = "https://www.youtube.com/watch?v=NFHDHcs4BvQ"
-    video_id = youtube_video.split("=")[1]
-    text = YouTubeTranscriptApi.get_transcript(video_id)
-    s = ""
-    for i in range(len(text)):
-        s += " "+text[i]['text']
-    return s
+    try:
+        youtube_video = request.form['y_link']
+        if("=" in youtube_video):
+            video_id = youtube_video.split("=")[1]
+        elif("youtu.be" in youtube_video):
+            video_id = youtube_video.split("/")[3]
 
+        text = YouTubeTranscriptApi.get_transcript(video_id)
+        s = ""
+        for i in range(len(text)):
+            s += " "+text[i]['text']
+        return s
+    except:
+        return 'hogappa'
 
-# server the app when this file is run
+        # server the app when this file is run
 if __name__ == '__main__':
     app.run()
