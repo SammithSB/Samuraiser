@@ -1,7 +1,14 @@
-import urlparse
+
 from youtube_transcript_api import YouTubeTranscriptApi
 import re
 from transformers import pipeline
+from transformers import T5ForConditionalGeneration, T5Tokenizer
+
+# initialize the model architecture and weights
+model = T5ForConditionalGeneration.from_pretrained("t5-base")
+# initialize the model tokenizer
+tokenizer = T5Tokenizer.from_pretrained("t5-base")
+
 '''
 match = re.search(r"youtube\.com/.*v=([^&]*)")
 if match:
@@ -43,7 +50,9 @@ Despite being away from the show for most of the past eight years, Barker didn't
 """
     summarization = pipeline("summarization")
     summary_text = summarization(text)[0]['summary_text']
-    return summary_text
+    inputs = tokenizer.encode(
+        "summarize: " + article, return_tensors="pt", max_length=512, truncation=True)
+    return tokenizer.decode(outputs[0])
 
 
 '''
